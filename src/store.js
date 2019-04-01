@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: 'null',
-    username: ''
+    username: '',
+    isCollapse: false
   },
   getters: {
     getToken: state => {
@@ -14,7 +15,7 @@ export default new Vuex.Store({
     },
     getUserName: state => {
       return state.username
-    }
+    },
   },
   mutations: {
     setToken (state, token) {
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     setUserName (state, username) {
       state.username = username
+    },
+    setCollapse (state, status) {
+      state.isCollapse = status
     }
   },
   actions: {

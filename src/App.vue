@@ -23,6 +23,10 @@ export default {
   }
 
   #app {
-    @extend .size
+    @extend .size;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: hidden;
   }
 </style>

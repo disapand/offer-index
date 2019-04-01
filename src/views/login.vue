@@ -71,7 +71,7 @@ export default {
             })
           }).catch((err) => {
             console.log('登陆异常', err)
-            this.$message.error('账号或密码错误，请重新登陆')
+            this.$alert('账号或密码错误')
             this.$refs.loginInfo.resetFields()
             this.$refs.account.focus()
           })
