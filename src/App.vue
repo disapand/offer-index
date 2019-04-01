@@ -6,26 +6,23 @@
 
 <script>
 export default {
-  name: 'app',
-  methods: {
-    login () {
-      login('10140', '123456').then(res => {
-        console.log('登录成功', res)
-      }).catch(err => {
-        console.log('登录失败', err)
-      })
-    }
-  }
+  name: 'app'
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped lang="scss">
+  .size {
+    width: 100%;
+    height: 100%;
+  }
+
+  html, body {
+    @extend .size;
+    padding: 0;
+    margin: 0;
+  }
+
+  #app {
+    @extend .size
+  }
 </style>

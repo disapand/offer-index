@@ -32,8 +32,11 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function (response) {
     // Do something with response data
-    if (response.headers.Authorization !== undefined) {
+    if (response.headers.Authorization) {
       store.commit('setToken', response.headers.Authorization)
+    }
+    if (response.data.token) {
+      store.commit('setToken', response.data.token)
     }
     return response
   },
