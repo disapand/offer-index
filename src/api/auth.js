@@ -17,3 +17,10 @@ export function profile () {
     method: 'get'
   })
 }
+
+export function profiles () {
+  return request({
+    url: '/profiles',
+    method: 'get'
+  })
+}

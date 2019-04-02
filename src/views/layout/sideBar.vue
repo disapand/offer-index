@@ -30,7 +30,7 @@
       <i class="el-icon-tickets"></i>
       <span>价格表管理</span>
     </el-menu-item>
-    <el-menu-item index="about">
+    <el-menu-item index="profiles">
       <i class="el-icon-setting"></i>
       <span>账号设置</span>
     </el-menu-item>

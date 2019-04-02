@@ -21,6 +21,11 @@ export default new Router({
           path: 'about',
           name: 'about',
           component: () => import('./views/About')
+        },
+        {
+          path: 'profiles',
+          name: 'profiles',
+          component: () => import('./views/profile/index')
         }
       ]
     },
