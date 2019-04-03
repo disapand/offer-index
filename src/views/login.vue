@@ -61,6 +61,7 @@ export default {
         if (valid) {
           login(this.loginInfo.account, this.loginInfo.password).then((res) => {
             profile().then((res) => {
+              this.$store.commit('setUserName', res.data.data.username)
               this.$router.push({ name: 'home' })
             }).catch((err) => {
               console.log('获取用户信息出错', err)

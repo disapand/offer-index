@@ -13,19 +13,19 @@ router.beforeEach((to, from, next) => {
   Nprogress.start()
   if (to.name === 'login') {
     if (store.getters.getToken === 'null') {
-      console.log('===> 有 token 还去登录页面')
-      next({ name: 'home' })
-    } else {
       console.log('===> 没有 token 还去登录页面')
       next()
+    } else {
+      console.log('===> 有 token 还去登录页面')
+      next({ name: 'home' })
     }
   } else {
     if (store.getters.getToken === 'null') {
-      console.log('===> 有 token 不去登录页面')
-      next()
-    } else {
       console.log('===> 没有 token 不去登录页面')
       next({ name: 'login' })
+    } else {
+      console.log('===> 有 token 不去登录页面')
+      next()
     }
   }
 })
