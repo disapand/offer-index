@@ -15,6 +15,7 @@ export default {
       this.$store.commit('setCollapse', !this.$store.state.isCollapse)
     },
     logout () {
+      this.$message.info('退出成功')
       this.$store.dispatch('logout')
       this.$router.push({ name: 'login' })
     }

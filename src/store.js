@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: localStorage.getItem('token') === 'null' ? 'null' : localStorage.getItem('token'),
-    username: '',
+    username: localStorage.getItem('username') === '' ? '' : localStorage.getItem('username'),
     isCollapse: false
   },
   getters: {
@@ -15,7 +15,7 @@ export default new Vuex.Store({
     },
     getUserName: state => {
       return state.username
-    },
+    }
   },
   mutations: {
     setToken (state, token) {
@@ -24,6 +24,7 @@ export default new Vuex.Store({
     },
     setUserName (state, username) {
       state.username = username
+      localStorage.setItem('username', username)
     },
     setCollapse (state, status) {
       state.isCollapse = status
