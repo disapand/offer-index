@@ -30,7 +30,7 @@ export default {
     handleHeader
   },
   created () {
-    if (this.$store.getters.getUserName === '') {
+    if (this.$store.getters.getUserName === 'null') {
       profile().then((res) => {
         this.$store.commit('setUserName', res.data.data.username)
       }).catch((err) => {

@@ -24,3 +24,16 @@ export function profiles () {
     method: 'get'
   })
 }
+
+export function register (account, password, username, sign) {
+  return request({
+    url: 'profile',
+    method: 'post',
+    data: {
+      account,
+      password,
+      username,
+      sign
+    }
+  })
+}

@@ -11,8 +11,8 @@
       <el-table-column prop="sign" label="标识"></el-table-column>
       <el-table-column prop="updated_at" label="创建时间"></el-table-column>
       <el-table-column label="操作">
-        <template slot="header" slot-scope="scope">
-          <el-button type="success" size="mini" @click="newProfile = true">添加新账号</el-button>
+        <template slot="header">
+          <el-button type="success" @click="newProfile = true">添加新账号</el-button>
         </template>
         <template slot-scope="scope">
           <el-button type="warning" v-if="scope.row.username === profile">编辑</el-button>
@@ -20,14 +20,31 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="添加新账号" :visible.sync="newProfile" center>
-
+    <el-dialog title="添加新账号" :visible.sync="newProfile" center :before-close="handleClose" width="30%" @close="handleClose">
+      <el-form :model="addUser" ref="addUser" :rules="profileRules">
+        <el-form-item label="账号" prop="account">
+          <el-input v-model="addUser.account" placeholder="请输入账号，账号为登录凭证，必须唯一"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="addUser.username" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="addUser.password" placeholder="请输入密码" type="password" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="标识" prop="sign">
+          <el-input v-model="addUser.sign" placeholder="请输入标识，用于生成编号使用，必须唯一"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="add">确定</el-button>
+        <el-button type="info" @click="newProfile = false">取消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { profiles } from '../../api/auth'
+import { profiles, register } from '../../api/auth'
 
 export default {
   name: 'index',
@@ -36,17 +53,60 @@ export default {
       profiles: [],
       editable: true,
       profile: '',
-      newProfile: false
+      newProfile: false,
+      addUser: {
+        account: '',
+        username: '',
+        password: '',
+        sign: ''
+      },
+      profileRules: {
+        account: [
+          { required: true, trigger: 'blur', message: '请输入账号' }
+        ],
+        username: [
+          { required: true, trigger: 'blur', message: '请输入用户名' }
+        ],
+        password: [
+          { required: true, trigger: 'blur', message: '请输入密码' },
+          { min: 6, trigger: 'blur', message: '密码强度太弱' }
+        ],
+        sign: [
+          { required: true, trigger: 'blur', message: '请输入标记' }
+        ]
+      }
     }
   },
   created () {
     this.profile = this.$store.getters.getUserName
     profiles().then((res) => {
-      console.log('获取用户信息', res.data)
       this.profiles = res.data.data
     }).catch((err) => {
       console.log('获取用户信息失败', err)
+      this.$message.error('登录超时，请重新登录')
+      this.$store.dispatch('logout')
+      this.$router.push({ name: 'login' })
     })
+  },
+  methods: {
+    add () {
+      this.$refs.addUser.validate((valid) => {
+        if (valid) {
+          register(this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign).then((res) => {
+            this.profiles.push(res.data.data)
+            this.newProfile = false
+          }).catch((err) => {
+            console.log('创建账号出错', err)
+            this.newProfile = false
+            this.$message.error('账号信息有误，请重新输入')
+          })
+        }
+      })
+    },
+    handleClose () {
+      this.$refs.addUser.resetFields()
+      this.newProfile = false
+    }
   }
 }
 </script>

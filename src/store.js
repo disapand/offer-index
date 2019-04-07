@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: localStorage.getItem('token') === 'null' ? 'null' : localStorage.getItem('token'),
-    username: localStorage.getItem('username') === '' ? '' : localStorage.getItem('username'),
+    username: localStorage.getItem('username') === 'null' ? 'null' : localStorage.getItem('username'),
     isCollapse: false
   },
   getters: {
@@ -33,7 +33,7 @@ export default new Vuex.Store({
   actions: {
     logout ({ commit }) {
       commit('setToken', 'null')
-      commit('setUserName', '')
+      commit('setUserName', 'null')
     }
   }
 })
