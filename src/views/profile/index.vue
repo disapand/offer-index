@@ -15,8 +15,8 @@
           <el-button type="success" @click="newProfile = true">添加新账号</el-button>
         </template>
         <template slot-scope="scope">
-          <el-button type="warning" v-if="scope.row.username === profile">编辑</el-button>
-          <el-button type="danger">删除</el-button>
+          <el-button type="warning" v-if="scope.row.username === profile" @click="handleEdit(scope.row.id)">编辑</el-button>
+          <el-button type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -40,11 +40,32 @@
         <el-button type="info" @click="newProfile = false">取消</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="编辑账号信息" :visible.sync="editProfile" center :before-close="handleClose" width="30%" @close="handleClose">
+      <el-form :model="addUser" ref="addUser" :rules="profileRules">
+        <el-form-item label="账号" prop="account">
+          <el-input v-model="addUser.account" placeholder="请输入账号，账号为登录凭证，必须唯一"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="addUser.username" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="addUser.password" placeholder="请输入密码" type="password" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="标识" prop="sign">
+          <el-input v-model="addUser.sign" placeholder="请输入标识，用于生成编号使用，必须唯一"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="edit">确定</el-button>
+        <el-button type="info" @click="editProfile = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { profiles, register } from '../../api/auth'
+import { profiles, register, profileDelete, getProfile, profileUpdate } from '../../api/auth'
 
 export default {
   name: 'index',
@@ -54,7 +75,9 @@ export default {
       editable: true,
       profile: '',
       newProfile: false,
+      editProfile: false,
       addUser: {
+        id: '',
         account: '',
         username: '',
         password: '',
@@ -106,6 +129,41 @@ export default {
     handleClose () {
       this.$refs.addUser.resetFields()
       this.newProfile = false
+      this.editProfile = false
+    },
+    handleDelete (id) {
+      profileDelete(id).then((res) => {
+        this.$message.success('删除成功')
+        profiles().then((res) => {
+          this.profiles = res.data.data
+        })
+      }).catch((err) => {
+        console.log('删除用户出错', err)
+        this.$message.error('删除用户失败')
+      })
+    },
+    handleEdit (id) {
+      getProfile(id).then((res) => {
+        this.addUser = res.data.data
+        this.editProfile = true
+      }).catch((err) => {
+        console.log('获取账号详细信息失败', err)
+      })
+    },
+    edit () {
+      profileUpdate(this.addUser.id, this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign).then((res) => {
+        this.$message.success('编辑账号信息成功')
+        profiles().then((res) => {
+          this.profiles = res.data.data
+        }).catch((err) => {
+          console.log('获取信息出错', err)
+        })
+        this.editProfile = false
+      }).catch((err) => {
+        console.log('编辑账号信息失败', err)
+        this.$message.error('编辑信息失败，请重新尝试')
+        this.editProfile = false
+      })
     }
   }
 }
