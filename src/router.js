@@ -18,9 +18,9 @@ export default new Router({
       component: () => import('./views/layout/index'),
       children: [
         {
-          path: 'about',
-          name: 'about',
-          component: () => import('./views/About')
+          path: 'price',
+          name: 'price',
+          component: () => import('./views/price/index')
         },
         {
           path: 'profiles',

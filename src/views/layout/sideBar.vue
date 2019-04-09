@@ -26,7 +26,7 @@
       <i class="el-icon-service"></i>
       <span>客户信息管理</span>
     </el-menu-item>
-    <el-menu-item index="about">
+    <el-menu-item index="price">
       <i class="el-icon-tickets"></i>
       <span>价格表管理</span>
     </el-menu-item>
