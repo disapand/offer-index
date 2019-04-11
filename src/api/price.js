@@ -6,3 +6,45 @@ export function getPrices () {
     method: 'get'
   })
 }
+
+export function getPrice (id) {
+  return request({
+    url: '/price/' + id,
+    method: 'get'
+  })
+}
+
+export function deletePrice (id) {
+  return request({
+    url: '/price/' + id,
+    method: 'delete'
+  })
+}
+
+export function addPrice (name, level, range, price, notice) {
+  return request({
+    url: '/price',
+    method: 'post',
+    data: {
+      name,
+      level,
+      range,
+      price,
+      notice
+    }
+  })
+}
+
+export function editPrice (id, name, level, range, price, notice) {
+  return request({
+    url: '/price/' + id,
+    method: 'post',
+    data: {
+      name,
+      level,
+      range,
+      price,
+      notice
+    }
+  })
+}
