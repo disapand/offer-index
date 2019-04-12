@@ -7,6 +7,13 @@ export function getPrices () {
   })
 }
 
+export function getPricesPagination (pageNo) {
+  return request({
+    url: '/prices?page=' + pageNo,
+    method: 'get'
+  })
+}
+
 export function getPrice (id) {
   return request({
     url: '/price/' + id,

@@ -71,16 +71,17 @@
       </el-dialog>
 
       <el-pagination
+        style="margin-top: 20px"
         :page-size="pagination.pageSize"
-        :page-count="pagination.pageCount"
         :total="pagination.total"
-        :current-page="pagination.currentPage"
+        :current-page.sync="pagination.currentPage"
+        @current-change="handleChangePage"
         background></el-pagination>
     </div>
 </template>
 
 <script>
-import { getPrices, deletePrice, addPrice, getPrice, editPrice } from '../../api/price'
+import { getPrices, deletePrice, addPrice, getPrice, editPrice, getPricesPagination } from '../../api/price'
 
 export default {
   name: 'index',
@@ -91,7 +92,6 @@ export default {
       editPrice: false,
       pagination: {
         pageSize: 0,
-        pageCount: 0,
         total: 0,
         currentPage: 0
       },
@@ -125,7 +125,7 @@ export default {
       this.prices = res.data.data
       this.pagination.currentPage = res.data.meta.current_page
       this.pagination.total = res.data.meta.total
-      this.pagination.pageSize = 5
+      this.pagination.pageSize = res.data.meta.to
       console.log('获取价目表', res.data)
     }).catch((err) => {
       console.log('获取价格清单出错', err)
@@ -173,7 +173,7 @@ export default {
         this.priceEditData.range, this.priceEditData.price, this.priceEditData.notice).then((res) => {
         this.$message.success('编辑成功')
         this.$refs.priceEditData.resetFields()
-        getPrices().then((res) => {
+        getPricesPagination(this.pagination.currentPage).then((res) => {
           this.prices = res.data.data
         })
         this.editPrice = false
@@ -181,6 +181,14 @@ export default {
         console.log('编辑出错', err)
         this.$message.error('编辑信息出错')
         this.editPrice = false
+      })
+    },
+    handleChangePage () {
+      getPricesPagination(this.pagination.currentPage).then((res) => {
+        this.prices = res.data.data
+        console.log(res.data)
+      }).catch((err) => {
+        console.log('换页失败', err)
       })
     }
   }
