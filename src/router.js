@@ -26,6 +26,21 @@ export default new Router({
           path: 'profiles',
           name: 'profiles',
           component: () => import('./views/profile/index')
+        },
+        {
+          path: 'customs',
+          name: 'customs',
+          component: () => import('./views/custom/index')
+        },
+        {
+          path: 'list',
+          name: 'list',
+          component: () => import('./views/paper/list')
+        },
+        {
+          path: 'paper',
+          name: 'paper',
+          component: () => import('./views/paper/index')
         }
       ]
     },

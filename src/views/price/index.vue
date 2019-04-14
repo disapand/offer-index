@@ -93,7 +93,7 @@ export default {
       pagination: {
         pageSize: 0,
         total: 0,
-        currentPage: 0
+        currentPage: 1
       },
       priceData: {
         name: '',
@@ -125,7 +125,7 @@ export default {
       this.prices = res.data.data
       this.pagination.currentPage = res.data.meta.current_page
       this.pagination.total = res.data.meta.total
-      this.pagination.pageSize = res.data.meta.to
+      this.pagination.pageSize = res.data.meta.per_page
       console.log('获取价目表', res.data)
     }).catch((err) => {
       console.log('获取价格清单出错', err)
@@ -186,7 +186,6 @@ export default {
     handleChangePage () {
       getPricesPagination(this.pagination.currentPage).then((res) => {
         this.prices = res.data.data
-        console.log(res.data)
       }).catch((err) => {
         console.log('换页失败', err)
       })

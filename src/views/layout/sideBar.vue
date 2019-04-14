@@ -13,16 +13,16 @@
         <i class="el-icon-time"></i>
         <span>报价单</span>
       </template>
-      <el-menu-item index="about">
+      <el-menu-item index="paper">
         <i class="el-icon-plus"></i>
         <span>报价</span>
       </el-menu-item>
-      <el-menu-item index="about">
+      <el-menu-item index="list">
         <i class="el-icon-view"></i>
         <span>报价单查询</span>
       </el-menu-item>
     </el-submenu>
-    <el-menu-item index="about">
+    <el-menu-item index="customs">
       <i class="el-icon-service"></i>
       <span>客户信息管理</span>
     </el-menu-item>

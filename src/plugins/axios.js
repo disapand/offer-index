@@ -32,8 +32,8 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function (response) {
     // Do something with response data
-    if (response.headers.Authorization) {
-      store.commit('setToken', response.headers.Authorization)
+    if (response.headers.authorization) {
+      store.commit('setToken', response.headers.authorization)
     }
     if (response.data.token) {
       store.commit('setToken', response.data.token)

@@ -9,7 +9,7 @@
         <handleHeader></handleHeader>
       </el-header>
       <el-main>
-        <transition name="el-zoom-in-center">
+        <transition name="el-zoom-in-top">
           <router-view></router-view>
         </transition>
       </el-main>
