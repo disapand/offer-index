@@ -7,6 +7,13 @@ export function getCustoms () {
   })
 }
 
+export function getCustomsByNameOrCompany (nameOrCompany) {
+  return request({
+    url: '/custom/' + nameOrCompany,
+    method: 'get'
+  })
+}
+
 export function getCustomsPagination (pageNo) {
   return request({
     url: '/customs?page=' + pageNo,

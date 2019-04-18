@@ -9,48 +9,68 @@
   </el-row>
   <el-row>
     <el-col :span="12">编号：SXLY896907622031</el-col>
-    <el-col :span="12" style="text-align: right">报价时间：2019/04/11</el-col>
+    <el-col :span="12" style="text-align: right;">报价时间：2019/04/11</el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">报价人：赵领超</el-col>
     <el-col :span="3" class="bordered-text-center">联系人</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-autocomplete v-model="contact.name"
+                       placeholder="联系人姓名"
+                       :fetch-suggestions="handleGetCustoms"
+                       :trigger-on-focus="false"
+                       style="width: 100%"
+                       @select="selectCustomItem"
+                       clearable>
+        <template slot-scope="{ item }">
+          <div class="name">{{ item.name }}</div>
+        </template>
+      </el-autocomplete>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">单位：陕西力源仪器设备检测有限公司</el-col>
     <el-col :span="3" class="bordered-text-center">单位</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-autocomplete v-model="contact.company"
+                       placeholder="单位名称"
+                       :fetch-suggestions="handleGetCustoms"
+                       :trigger-on-focus="false"
+                       style="width: 100%"
+                       @select="selectCustomItem"
+                       clearable>
+        <template slot-scope="{ item }">
+          <div class="company">{{ item.company }}</div>
+        </template>
+      </el-autocomplete>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">地址：西安市航天产业基地神舟四路工业二路建工科技创业基地</el-col>
     <el-col :span="3" class="bordered-text-center">地址</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-input v-model="contact.addr" placeholder="单位地址"></el-input>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">电话：029-89690762</el-col>
     <el-col :span="3" class="bordered-text-center">电话</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-input v-model="contact.number" placeholder="联系电话"></el-input>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">手机：13110445979</el-col>
     <el-col :span="3" class="bordered-text-center">邮箱</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-input v-model="contact.email" placeholder="联系人邮箱"></el-input>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
     <el-col :span="12" class="bordered-cell">邮箱：1316917381@qq.com</el-col>
     <el-col :span="3" class="bordered-text-center">备注</el-col>
     <el-col :span="9" class="bordered-text-center">
-      <el-input></el-input>
+      <el-input v-model="contact.notice" placeholder="备注信息"></el-input>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
@@ -77,9 +97,18 @@
     <el-col :span="5" class="bordered-text-center"><strong>备注</strong></el-col>
   </el-row>
   <el-row style="display: flex">
-    <el-col :span="1" class="bordered-text-center">{{ paperList.id }}</el-col>
+    <el-col :span="1" class="bordered-text-center">{{ paperListIndex }}</el-col>
     <el-col :span="8" class="bordered-text-center">
-      <el-input v-model="paperList.name"></el-input>
+      <el-autocomplete v-model="paperList.name"
+                       :fetch-suggestions="handleQuery"
+                       @select="handleSelect"
+                       style="width: 100%"
+                       clearable
+                       :trigger-on-focus="false">
+        <template slot-scope="{ item }">
+          <div class="name">{{ item.name }}</div>
+        </template>
+      </el-autocomplete>
     </el-col>
     <el-col :span="4" class="bordered-text-center">
       <el-input v-model="paperList.type"></el-input>
@@ -91,7 +120,7 @@
       <el-input v-model="paperList.price"></el-input>
     </el-col>
     <el-col :span="2" class="bordered-text-center">
-      <el-input v-model="getTotal" disabled></el-input>
+      <el-input v-model="getTotal"></el-input>
     </el-col>
     <el-col :span="5" class="bordered-text-center">
       <el-input v-model="paperList.notice"></el-input>
@@ -101,20 +130,52 @@
 </template>
 
 <script>
+import { getPricesByName } from '../../api/price'
+import { getCustomsByNameOrCompany } from '../../api/custom'
 
 export default {
   name: 'index',
   data () {
     return {
+      paperListIndex: 1,
       paperList: {
-        id: 1,
         name: '',
         type: '',
         price: '',
         number: '',
         total: '',
         notice: ''
+      },
+      contact: {
+        name: '',
+        company: '',
+        addr: '',
+        number: '',
+        email: '',
+        notice: ''
       }
+    }
+  },
+  methods: {
+    handleQuery (queryString, callback) {
+      getPricesByName(queryString).then((res) => {
+        callback(res.data.data)
+      }).catch((err) => {
+        console.log('远程获取价目信息出错', err)
+      })
+    },
+    handleSelect (item) {
+      this.paperList = item
+    },
+    handleGetCustoms (queryString, callback) {
+      getCustomsByNameOrCompany(queryString).then((res) => {
+        callback(res.data.data)
+      }).catch((err) => {
+        console.log('远程获取用户信息出错', err)
+      })
+    },
+    selectCustomItem (item) {
+      this.contact = item
     }
   },
   computed: {
