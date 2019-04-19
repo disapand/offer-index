@@ -39,7 +39,7 @@ export function getProfile (id) {
   })
 }
 
-export function profileUpdate (id, account, password, username, sign) {
+export function profileUpdate (id, account, password, username, sign, number, tel) {
   return request({
     url: '/profile/' + id,
     method: 'put',
@@ -47,12 +47,14 @@ export function profileUpdate (id, account, password, username, sign) {
       account,
       password,
       username,
-      sign
+      sign,
+      number,
+      tel
     }
   })
 }
 
-export function register (account, password, username, sign) {
+export function register (account, password, username, sign, number, tel) {
   return request({
     url: 'profile',
     method: 'post',
@@ -60,7 +62,9 @@ export function register (account, password, username, sign) {
       account,
       password,
       username,
-      sign
+      sign,
+      number,
+      tel
     }
   })
 }

@@ -9,6 +9,8 @@
       <el-table-column prop="account" label="账号"></el-table-column>
       <el-table-column prop="username" label="用户名"></el-table-column>
       <el-table-column prop="sign" label="标识"></el-table-column>
+      <el-table-column prop="number" label="固话"></el-table-column>
+      <el-table-column prop="tel" label="手机"></el-table-column>
       <el-table-column prop="updated_at" label="创建时间"></el-table-column>
       <el-table-column label="操作">
         <template slot="header">
@@ -34,6 +36,12 @@
         <el-form-item label="标识" prop="sign">
           <el-input v-model="addUser.sign" placeholder="请输入标识，用于生成编号使用，必须唯一"></el-input>
         </el-form-item>
+        <el-form-item label="固话" prop="number">
+          <el-input v-model="addUser.number" placeholder="请输入固话"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="tel">
+          <el-input v-model="addUser.tel" placeholder="请输入手机号码"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button type="primary" @click="add">确定</el-button>
@@ -54,6 +62,12 @@
         </el-form-item>
         <el-form-item label="标识" prop="sign">
           <el-input v-model="addUser.sign" placeholder="请输入标识，用于生成编号使用，必须唯一"></el-input>
+        </el-form-item>
+        <el-form-item label="固话" prop="number">
+          <el-input v-model="addUser.number" placeholder="请输入固话"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="tel">
+          <el-input v-model="addUser.tel" placeholder="请输入手机号码"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -81,6 +95,8 @@ export default {
         account: '',
         username: '',
         password: '',
+        number: '',
+        tel: '',
         sign: ''
       },
       profileRules: {
@@ -115,14 +131,16 @@ export default {
     add () {
       this.$refs.addUser.validate((valid) => {
         if (valid) {
-          register(this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign).then((res) => {
-            this.profiles.push(res.data.data)
-            this.newProfile = false
-          }).catch((err) => {
-            console.log('创建账号出错', err)
-            this.newProfile = false
-            this.$message.error('账号信息有误，请重新输入')
-          })
+          register(this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign, this.addUser.number, this.addUser.tel)
+            .then((res) => {
+              this.profiles.push(res.data.data)
+              this.newProfile = false
+              this.$message.success('创建账号成功')
+            }).catch((err) => {
+              console.log('创建账号出错', err)
+              this.newProfile = false
+              this.$message.error('账号信息有误，请重新输入')
+            })
         }
       })
     },
@@ -151,7 +169,8 @@ export default {
       })
     },
     edit () {
-      profileUpdate(this.addUser.id, this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign).then((res) => {
+      profileUpdate(this.addUser.id, this.addUser.account, this.addUser.password, this.addUser.username, this.addUser.sign,
+        this.addUser.number, this.addUser.tel).then((res) => {
         this.$message.success('编辑账号信息成功')
         profiles().then((res) => {
           this.profiles = res.data.data

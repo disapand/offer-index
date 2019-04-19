@@ -8,11 +8,11 @@
     <el-col :span="3"></el-col>
   </el-row>
   <el-row>
-    <el-col :span="12">编号：SXLY896907622031</el-col>
-    <el-col :span="12" style="text-align: right;">报价时间：2019/04/11</el-col>
+    <el-col :span="12">编号：{{ this.paperId }}</el-col>
+    <el-col :span="12" style="text-align: right;">报价时间：{{ this.paperTime }}</el-col>
   </el-row>
   <el-row style="display: flex;">
-    <el-col :span="12" class="bordered-cell">报价人：赵领超</el-col>
+    <el-col :span="12" class="bordered-cell">报价人：{{ profile.username }}</el-col>
     <el-col :span="3" class="bordered-text-center">联系人</el-col>
     <el-col :span="9" class="bordered-text-center">
       <el-autocomplete v-model="contact.name"
@@ -53,14 +53,14 @@
     </el-col>
   </el-row>
   <el-row style="display: flex;">
-    <el-col :span="12" class="bordered-cell">电话：029-89690762</el-col>
+    <el-col :span="12" class="bordered-cell">电话：{{ profile.number }}</el-col>
     <el-col :span="3" class="bordered-text-center">电话</el-col>
     <el-col :span="9" class="bordered-text-center">
       <el-input v-model="contact.number" placeholder="联系电话"></el-input>
     </el-col>
   </el-row>
   <el-row style="display: flex;">
-    <el-col :span="12" class="bordered-cell">手机：13110445979</el-col>
+    <el-col :span="12" class="bordered-cell">手机：{{ profile.tel }}</el-col>
     <el-col :span="3" class="bordered-text-center">邮箱</el-col>
     <el-col :span="9" class="bordered-text-center">
       <el-input v-model="contact.email" placeholder="联系人邮箱"></el-input>
@@ -96,10 +96,10 @@
     <el-col :span="2" class="bordered-text-center"><strong>合计（元）</strong></el-col>
     <el-col :span="5" class="bordered-text-center"><strong>备注</strong></el-col>
   </el-row>
-  <el-row style="display: flex">
-    <el-col :span="1" class="bordered-text-center">{{ paperListIndex }}</el-col>
+  <el-row style="display: flex" v-for="n in 10">
+    <el-col :span="1" class="bordered-text-center">{{ n }}</el-col>
     <el-col :span="8" class="bordered-text-center">
-      <el-autocomplete v-model="paperList.name"
+      <el-autocomplete v-model="paperList[n].name"
                        :fetch-suggestions="handleQuery"
                        @select="handleSelect"
                        style="width: 100%"
@@ -120,7 +120,7 @@
       <el-input v-model="paperList.price"></el-input>
     </el-col>
     <el-col :span="2" class="bordered-text-center">
-      <el-input v-model="getTotal"></el-input>
+      <el-input v-model="paperList.total"></el-input>
     </el-col>
     <el-col :span="5" class="bordered-text-center">
       <el-input v-model="paperList.notice"></el-input>
@@ -132,20 +132,15 @@
 <script>
 import { getPricesByName } from '../../api/price'
 import { getCustomsByNameOrCompany } from '../../api/custom'
+import { profile } from '../../api/auth'
 
 export default {
   name: 'index',
   data () {
     return {
+      profile: {},
       paperListIndex: 1,
-      paperList: {
-        name: '',
-        type: '',
-        price: '',
-        number: '',
-        total: '',
-        notice: ''
-      },
+      paperList: [],
       contact: {
         name: '',
         company: '',
@@ -153,8 +148,19 @@ export default {
         number: '',
         email: '',
         notice: ''
-      }
+      },
+      paperTime: '',
+      paperId: ''
     }
+  },
+  created () {
+    let myDate = new Date()
+    profile().then((res) => {
+      this.profile = res.data.data
+      this.paperTime = myDate.toLocaleString('chinese', { hour12: false })
+      this.paperId = 'SXLY' + this.profile.sign + myDate.getFullYear() + (myDate.getMonth() + 1) +
+        myDate.getDate() + myDate.getTime().toString().substr(5)
+    })
   },
   methods: {
     handleQuery (queryString, callback) {
@@ -179,13 +185,13 @@ export default {
     }
   },
   computed: {
-    getTotal: function () {
-      return this.paperList.price * this.paperList.number
+    getTotal () {
+      return this.paperList.number * this.paperList.price
     }
   },
   watch: {
-    paperList: function () {
-      this.total = this.number * this.price
+    getTotal (total) {
+      this.paperList.total = total
     }
   }
 }
