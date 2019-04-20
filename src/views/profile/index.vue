@@ -17,7 +17,7 @@
           <el-button type="success" @click="newProfile = true">添加新账号</el-button>
         </template>
         <template slot-scope="scope">
-          <el-button type="warning" v-if="scope.row.username === profile" @click="handleEdit(scope.row.id)">编辑</el-button>
+          <el-button type="warning" @click="handleEdit(scope.row.id)">编辑</el-button>
           <el-button type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -87,7 +87,6 @@ export default {
     return {
       profiles: [],
       editable: true,
-      profile: '',
       newProfile: false,
       editProfile: false,
       addUser: {
@@ -117,7 +116,6 @@ export default {
     }
   },
   created () {
-    this.profile = this.$store.getters.getUserName
     profiles().then((res) => {
       this.profiles = res.data.data
     }).catch((err) => {

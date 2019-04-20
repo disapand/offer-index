@@ -30,7 +30,7 @@
       <i class="el-icon-tickets"></i>
       <span>价格表管理</span>
     </el-menu-item>
-    <el-menu-item index="profiles">
+    <el-menu-item index="profiles" v-if="this.$store.getters.getUserName === '管理员'">
       <i class="el-icon-setting"></i>
       <span>账号设置</span>
     </el-menu-item>
@@ -45,8 +45,6 @@ export default {
     return {
       isCollapse: this.$store.state.isCollapse
     }
-  },
-  methods: {
   }
 }
 </script>
