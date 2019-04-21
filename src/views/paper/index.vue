@@ -1,7 +1,10 @@
 <template>
 <div>
-  <div class="float-button">
-    <el-button type="success" @click="addItem = true">添加条目</el-button>
+  <div class="float-button toolbar">
+    <el-button type="success" @click="addItem = true" style="display: block">添加条目</el-button>
+    <el-button type="warning" @click="addTransform" style="display: block; margin-left: 0; margin-top: 10px">添加交通费</el-button>
+    <el-button type="info" @click="getDiscount" style="display: block; margin-left: 0; margin-top: 10px">折扣&nbsp;{{ discount * 100 + '%' }}</el-button>
+    <el-button type="primary" @click="getPDF(contact.company)" style="display: block; margin-left: 0; margin-top: 10px">导出PDF</el-button>
   </div>
   <div class="paper">
     <el-row>
@@ -20,14 +23,13 @@
       <el-col :span="3" class="bordered-text-center">联系人</el-col>
       <el-col :span="9" class="bordered-text-center">
         <el-autocomplete v-model="contact.name"
-                         placeholder="联系人姓名"
                          :fetch-suggestions="handleGetCustoms"
                          :trigger-on-focus="false"
                          style="width: 100%"
                          @select="selectCustomItem"
                          clearable>
           <template slot-scope="{ item }">
-            <div class="name">{{ item.name }}</div>
+            <div class="name">{{ item.name }} || {{ item.company }}</div>
           </template>
         </el-autocomplete>
       </el-col>
@@ -37,14 +39,13 @@
       <el-col :span="3" class="bordered-text-center">单位</el-col>
       <el-col :span="9" class="bordered-text-center">
         <el-autocomplete v-model="contact.company"
-                         placeholder="单位名称"
                          :fetch-suggestions="handleGetCustoms"
                          :trigger-on-focus="false"
                          style="width: 100%"
                          @select="selectCustomItem"
                          clearable>
           <template slot-scope="{ item }">
-            <div class="company">{{ item.company }}</div>
+            <div>{{ item.company }} || {{ item.name }}</div>
           </template>
         </el-autocomplete>
       </el-col>
@@ -53,28 +54,28 @@
       <el-col :span="12" class="bordered-cell">地址：西安市航天产业基地神舟四路工业二路建工科技创业基地</el-col>
       <el-col :span="3" class="bordered-text-center">地址</el-col>
       <el-col :span="9" class="bordered-text-center">
-        <el-input v-model="contact.addr" placeholder="单位地址"></el-input>
+        <el-input v-model="contact.addr"></el-input>
       </el-col>
     </el-row>
     <el-row style="display: flex;">
       <el-col :span="12" class="bordered-cell">电话：{{ profile.number }}</el-col>
       <el-col :span="3" class="bordered-text-center">电话</el-col>
       <el-col :span="9" class="bordered-text-center">
-        <el-input v-model="contact.number" placeholder="联系电话"></el-input>
+        <el-input v-model="contact.number"></el-input>
       </el-col>
     </el-row>
     <el-row style="display: flex;">
       <el-col :span="12" class="bordered-cell">手机：{{ profile.tel }}</el-col>
       <el-col :span="3" class="bordered-text-center">邮箱</el-col>
       <el-col :span="9" class="bordered-text-center">
-        <el-input v-model="contact.email" placeholder="联系人邮箱"></el-input>
+        <el-input v-model="contact.email"></el-input>
       </el-col>
     </el-row>
     <el-row style="display: flex;">
       <el-col :span="12" class="bordered-cell">邮箱：1316917381@qq.com</el-col>
       <el-col :span="3" class="bordered-text-center">备注</el-col>
       <el-col :span="9" class="bordered-text-center">
-        <el-input v-model="contact.notice" placeholder="备注信息"></el-input>
+        <el-input v-model="contact.notice"></el-input>
       </el-col>
     </el-row>
     <el-row style="display: flex;">
@@ -121,6 +122,18 @@
         <el-input v-model="paper.notice"></el-input>
       </el-col>
     </el-row>
+    <el-row>
+      <el-col :span="13" class="bordered-text-center">交通费</el-col>
+      <el-col :span="11" class="bordered-text-center">{{ transformPrice }}元</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="13" class="bordered-text-center">合计金额（含税）</el-col>
+      <el-col :span="11" class="bordered-text-center">{{ getShouldPay }}元<span v-if="discount !== 1">【{{ discount }}折】</span></el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="13" class="bordered-text-center">合计金额（大写）</el-col>
+      <el-col :span="11" class="bordered-text-center">{{ getBig }}</el-col>
+    </el-row>
 
     <el-dialog title="添加报价" :visible.sync="addItem" center width="30%">
       <el-form :model="paperListItem" ref="paperListItem" :rules="paperListItemRules">
@@ -131,9 +144,10 @@
                            @select="handleSelect"
                            style="width: 100%"
                            clearable
+                           autofocus
                            :trigger-on-focus="false">
             <template slot-scope="{ item }">
-              <div class="name">{{ item.name }}</div>
+              <div>{{ item.name }} || {{ item.level }} || {{ item.range }}</div>
             </template>
           </el-autocomplete>
         </el-form-item>
@@ -144,7 +158,7 @@
           <el-input v-model.number="paperListItem.number" clearable @keyup.enter.native="handleAddItem"></el-input>
         </el-form-item>
         <el-form-item label="单价（元）" prop="price" style="width: 48%; display: inline-block;margin-left: 4%;">
-          <el-input v-model="paperListItem.price" clearable></el-input>
+          <el-input v-model="paperListItem.price" clearable @keyup.enter.native="handleAddItem"></el-input>
         </el-form-item>
         <el-form-item label="合计（元）" prop="total">
           <el-input v-model="paperListItem.total" clearable></el-input>
@@ -165,6 +179,10 @@
 import { getPricesByName } from '../../api/price'
 import { getCustomsByNameOrCompany } from '../../api/custom'
 import { profile } from '../../api/auth'
+import { smallToBig } from '../../handle/handle'
+import { pdf } from '../../handle/htmlToPdf'
+import signUrl from '../../assets/sign.png'
+import { paper } from '../../api/paper'
 
 export default {
   name: 'index',
@@ -180,6 +198,9 @@ export default {
         number: [
           { required: true, trigger: 'blur', message: '请输入数量' },
           { type: 'number', trigger: 'blur', message: '数量必须为数字' }
+        ],
+        price: [
+          { required: true, trigger: 'blur', message: '请输入价格' }
         ]
       },
       addItem: false,
@@ -192,7 +213,11 @@ export default {
         notice: ''
       },
       paperTime: '',
-      paperId: ''
+      paperId: '',
+      transformPrice: 0,
+      shouldPay: 0,
+      discount: 1,
+      signUrl: signUrl
     }
   },
   created () {
@@ -236,13 +261,62 @@ export default {
     },
     handleDeleteItem (index) {
       this.paperList.splice(index, 1)
+    },
+    addTransform () {
+      this.$prompt('交通费', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonClass: '取消',
+        inputType: 'number'
+      }).then(({ value }) => {
+        this.transformPrice = value
+      })
+    },
+    getDiscount () {
+      this.$prompt('折扣', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonClass: '取消',
+        inputType: 'number'
+      }).then(({ value }) => {
+        this.discount = value / 10
+      })
+    },
+    getPDF (title) {
+      if (!this.contact.company || this.paperList.length === 0) {
+        this.$alert('请输入完整的内容', '内容异常')
+        return false
+      } else {
+        paper(this.$data).then((res) => {
+          console.log(res)
+          this.$message.success('PDF生成成功')
+          pdf(title)
+        }).catch((err) => {
+          console.log('保存出错', err)
+        })
+      }
     }
   },
   computed: {
     getTotal () {
       let total = this.paperListItem.number * this.paperListItem.price
       return isNaN(total) ? 0 : total
+    },
+    getBig () {
+      return smallToBig(this.shouldPay)
+    },
+    getShouldPay () {
+      if (this.paperList.length === 0) {
+        this.shouldPay = this.transformPrice * this.discount
+        return this.shouldPay
+      } else {
+        let tmp = 0
+        for (let i = 0; i < this.paperList.length; i++) {
+          tmp += parseInt(this.paperList[i].total)
+        }
+        this.shouldPay = (tmp + parseInt(this.transformPrice)) * this.discount
+        return this.shouldPay
+      }
     }
+
   },
   watch: {
     getTotal (total) {
@@ -252,12 +326,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .paper {
-  border: black 1px solid;
   width: 70%;
   margin: 0 auto;
   line-height: 2em;
+  padding: 50px;
 }
 
 .bordered-cell {
@@ -275,5 +349,10 @@ export default {
   background: #eee;
   padding: 15px 25px;
   margin: 10px 0 20px 0;
+}
+.toolbar {
+  position: fixed;
+  top: 65px;
+  z-index: 9;
 }
 </style>
