@@ -6,6 +6,7 @@
     mode="vertical"
     :router=true
     :unique-opened=true
+    default-active="list"
     background-color="#333"
     text-color="#fff">
     <el-submenu index="1">

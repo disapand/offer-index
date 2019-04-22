@@ -15,6 +15,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
+      redirect: 'list',
       component: () => import('./views/layout/index'),
       children: [
         {
@@ -41,6 +42,11 @@ export default new Router({
           path: 'paper',
           name: 'paper',
           component: () => import('./views/paper/index')
+        },
+        {
+          path: 'detail',
+          name: 'detail',
+          component: () => import('./views/paper/detail')
         }
       ]
     },
