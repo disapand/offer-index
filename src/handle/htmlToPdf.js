@@ -22,11 +22,11 @@ export function pdf (title) {
     let PDF = new JsPDF('', 'pt', 'a4')
     if (leftHeight < pageHeight) {
       PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
-      PDF.addImage(img, 'PNG', 50, 60, 100, 100)
+      PDF.addImage(img, 'PNG', 60, 75, 80, 70)
     } else {
       while (leftHeight > 0) {
         PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-        PDF.addImage(img, 'PNG', 50, 60, 100, 100)
+        PDF.addImage(img, 'PNG', 60, 75, 80, 70)
         leftHeight -= pageHeight
         position -= 841.89
         if (leftHeight > 0) {

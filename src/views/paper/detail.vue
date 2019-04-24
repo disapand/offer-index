@@ -6,11 +6,16 @@
   </div>
   <div class="paper">
     <el-row>
-      <el-col :span="3"></el-col>
-      <el-col :span="18" :offset="3" style="text-align: center">
+      <el-col :span="3">
+        <img :src="ly" alt="" style="width: 120px;">
+      </el-col>
+      <el-col :span="15" style="text-align: center">
         <h1>陕西力源仪器设备检测有限公司<br />仪器设备报价单</h1>
       </el-col>
-      <el-col :span="3"></el-col>
+      <el-col :span="6">
+        <img :src="pt" alt="" style="width: 120px">
+        <img :src="fw" alt="" style="width: 120px; float: right">
+      </el-col>
     </el-row>
     <el-row>
       <el-col :span="12" style="padding-left: 15px">编号：{{ paper.paperId }}</el-col>
@@ -98,11 +103,17 @@
 import { pdf } from '../../handle/htmlToPdf'
 import { paper } from '../../api/paper'
 import { getPaper } from '../../api/paper'
+import fw from '../../assets/fw.jpg'
+import pt from '../../assets/pt.jpg'
+import ly from '../../assets/ly.png'
 
 export default {
   name: 'detail',
   data () {
     return {
+      fw: fw,
+      pt: pt,
+      ly: ly,
       paper: {}
     }
   },
