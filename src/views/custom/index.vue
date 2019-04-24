@@ -1,5 +1,20 @@
 <template>
     <div>
+      <el-row style="margin: 15px 0">
+        <el-col :span="10">
+          <el-input
+            placeholder="请输入单位名称"
+            prefix-icon="el-icon-search"
+            clearable
+            @keyup.enter.native="handleSearch"
+            @clear="handleClear"
+            v-model="query">
+          </el-input>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+        </el-col>
+      </el-row>
       <el-table
         :data="customs"
         border
@@ -89,7 +104,7 @@
 </template>
 
 <script>
-import { deleteCustom, getCustoms, newCustom, getCustomsPagination, getCustom, updateCustom } from '../../api/custom'
+import { deleteCustom, getCustoms, newCustom, getCustomsPagination, getCustom, updateCustom, getCustomsByNameOrCompany } from '../../api/custom'
 
 export default {
   name: 'index',
@@ -135,10 +150,13 @@ export default {
         total: 0,
         currentPage: 1,
         pageSize: 0
-      }
+      },
+      query: '',
+      isQuery: false
     }
   },
   created () {
+    this.isQuery = false
     getCustoms().then((res) => {
       this.pagination.total = res.data.meta.total
       this.pagination.pageSize = res.data.meta.per_page
@@ -195,10 +213,52 @@ export default {
       })
     },
     handleChangePage () {
-      getCustomsPagination(this.pagination.currentPage).then((res) => {
+      if (this.isQuery) {
+        getCustomsByNameOrCompany(this.query, this.pagination.currentPage).then((res) => {
+          this.customs = res.data.data
+        }).catch((err) => {
+          console.log('查询客户信息失败', err)
+        })
+      } else {
+        getCustomsPagination(this.pagination.currentPage).then((res) => {
+          this.customs = res.data.data
+        }).catch((err) => {
+          console.log('换页失败', err)
+        })
+      }
+    },
+    handleSearch () {
+      if (this.query === '') {
+        this.isQuery = false
+        getCustoms().then((res) => {
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+          this.pagination.currentPage = res.data.meta.current_page
+          this.customs = res.data.data
+        }).catch((err) => {
+          console.log('获取客户信息出错', err)
+        })
+      } else {
+        this.isQuery = true
+        getCustomsByNameOrCompany(this.query).then((res) => {
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+          this.pagination.currentPage = res.data.meta.current_page
+          this.customs = res.data.data
+        }).catch((err) => {
+          console.log('查询客户信息失败', err)
+        })
+      }
+    },
+    handleClear () {
+      this.isQuery = false
+      getCustoms().then((res) => {
+        this.pagination.total = res.data.meta.total
+        this.pagination.pageSize = res.data.meta.per_page
+        this.pagination.currentPage = res.data.meta.current_page
         this.customs = res.data.data
       }).catch((err) => {
-        console.log('换页失败', err)
+        console.log('获取客户信息出错', err)
       })
     }
   }

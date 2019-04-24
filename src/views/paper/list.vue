@@ -1,5 +1,20 @@
 <template>
     <div>
+      <el-row style="margin: 15px 0">
+        <el-col :span="10">
+          <el-input
+            placeholder="请输入单位名称"
+            prefix-icon="el-icon-search"
+            clearable
+            @keyup.enter.native="handleSearch"
+            @clear="handleClear"
+            v-model="query">
+          </el-input>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+        </el-col>
+      </el-row>
       <el-table
         :data="papers"
         border
@@ -38,6 +53,8 @@ export default {
   data () {
     return {
       papers: [],
+      query: '',
+      isQuery: false,
       pagination: {
         pageSize: 0,
         total: 0,
@@ -46,9 +63,7 @@ export default {
     }
   },
   created () {
-    paperSearch('名字').then((res) => {
-      console.log(res.data.data)
-    })
+    this.isQuery = false
     papers().then((res) => {
       this.papers = res.data.data
       this.pagination.currentPage = res.data.meta.current_page
@@ -64,11 +79,19 @@ export default {
       this.$router.push({ name: 'detail', params: { id: id } })
     },
     handleChangePage () {
-      getPricesPagination(this.pagination.currentPage).then((res) => {
-        this.papers = res.data.data
-      }).catch((err) => {
-        console.log('获取分页错误', err)
-      })
+      if (this.isQuery) {
+        paperSearch(this.query, this.pagination.currentPage).then((res) => {
+          this.papers = res.data.data
+        }).catch((err) => {
+          console.log('搜索结果出错', err)
+        })
+      } else {
+        getPricesPagination(this.pagination.currentPage).then((res) => {
+          this.papers = res.data.data
+        }).catch((err) => {
+          console.log('获取分页错误', err)
+        })
+      }
     },
     handleDelete (id) {
       deletePaper(id).then((res) => {
@@ -80,6 +103,42 @@ export default {
       }).catch((err) => {
         console.log('删除报价单出错', err)
         this.$message.error('删除报价单出错')
+      })
+    },
+    handleSearch () {
+      if (this.query === '') {
+        this.isQuery = false
+        papers().then((res) => {
+          this.papers = res.data.data
+          this.pagination.currentPage = res.data.meta.current_page
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+        }).catch((err) => {
+          console.log('获取报价单列表出错', err)
+          this.$message.error('报价单列表获取出错，请检查网络环境')
+        })
+      } else {
+        this.isQuery = true
+        paperSearch(this.query, 1).then((res) => {
+          this.papers = res.data.data
+          this.pagination.currentPage = res.data.meta.current_page
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+        }).catch((err) => {
+          console.log('搜索结果出错', err)
+        })
+      }
+    },
+    handleClear () {
+      this.isQuery = false
+      papers().then((res) => {
+        this.papers = res.data.data
+        this.pagination.currentPage = res.data.meta.current_page
+        this.pagination.total = res.data.meta.total
+        this.pagination.pageSize = res.data.meta.per_page
+      }).catch((err) => {
+        console.log('获取报价单列表出错', err)
+        this.$message.error('报价单列表获取出错，请检查网络环境')
       })
     }
   }

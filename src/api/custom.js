@@ -7,9 +7,9 @@ export function getCustoms () {
   })
 }
 
-export function getCustomsByNameOrCompany (nameOrCompany) {
+export function getCustomsByNameOrCompany (nameOrCompany, currentPage = 1) {
   return request({
-    url: '/custom/' + nameOrCompany,
+    url: '/customQuery/' + nameOrCompany + '?page=' + currentPage,
     method: 'get'
   })
 }

@@ -7,9 +7,9 @@ export function getPrices () {
   })
 }
 
-export function getPricesByName (name) {
+export function getPricesByName (name, currentPage = 1) {
   return request({
-    url: '/price/' + name,
+    url: '/price/' + name + '?page=' + currentPage,
     method: 'get'
   })
 }

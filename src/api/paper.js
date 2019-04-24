@@ -36,9 +36,9 @@ export function deletePaper (id) {
   })
 }
 
-export function paperSearch (company) {
+export function paperSearch (company, currentPage) {
   return request({
-    url: '/paperSearch/' + company,
+    url: '/paperSearch/' + company + '?page=' + currentPage,
     method: 'get'
   })
 }

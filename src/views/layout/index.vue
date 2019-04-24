@@ -5,7 +5,7 @@
       <Sidebar></Sidebar>
     </el-aside>
     <el-container>
-      <el-header>
+      <el-header style="background: #eee">
         <handleHeader></handleHeader>
       </el-header>
       <el-main>

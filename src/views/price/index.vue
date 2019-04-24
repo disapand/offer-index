@@ -1,5 +1,20 @@
 <template>
     <div>
+      <el-row style="margin: 15px 0">
+        <el-col :span="10">
+          <el-input
+            placeholder="请输入设备名称"
+            prefix-icon="el-icon-search"
+            clearable
+            @keyup.enter.native="handleSearch"
+            @clear="handleClear"
+            v-model="query">
+          </el-input>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+        </el-col>
+      </el-row>
       <el-table
         :data="prices"
         border
@@ -81,7 +96,7 @@
 </template>
 
 <script>
-import { getPrices, deletePrice, addPrice, getPrice, editPrice, getPricesPagination } from '../../api/price'
+import { getPrices, deletePrice, addPrice, getPrice, editPrice, getPricesPagination, getPricesByName } from '../../api/price'
 
 export default {
   name: 'index',
@@ -117,7 +132,9 @@ export default {
           { required: true, trigger: 'blur', message: '请输入价格' },
           { type: 'number', trigger: 'blur', message: '价格只能是数字' }
         ]
-      }
+      },
+      query: '',
+      isQuery: false
     }
   },
   created () {
@@ -184,10 +201,54 @@ export default {
       })
     },
     handleChangePage () {
-      getPricesPagination(this.pagination.currentPage).then((res) => {
+      if (this.isQuery) {
+        getPricesByName(this.query, this.pagination.currentPage).then((res) => {
+          this.prices = res.data.data
+        }).catch((err) => {
+          console.log('搜索结果出错', err)
+        })
+      } else {
+        getPricesPagination(this.pagination.currentPage).then((res) => {
+          this.prices = res.data.data
+        }).catch((err) => {
+          console.log('换页失败', err)
+        })
+      }
+    },
+    handleSearch () {
+      if (this.query === '') {
+        this.isQuery = false
+        getPrices().then((res) => {
+          this.prices = res.data.data
+          this.pagination.currentPage = res.data.meta.current_page
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+        }).catch((err) => {
+          console.log('获取报价单列表出错', err)
+          this.$message.error('报价单列表获取出错，请检查网络环境')
+        })
+      } else {
+        this.isQuery = true
+        getPricesByName(this.query, 1).then((res) => {
+          this.prices = res.data.data
+          this.pagination.currentPage = res.data.meta.current_page
+          this.pagination.total = res.data.meta.total
+          this.pagination.pageSize = res.data.meta.per_page
+        }).catch((err) => {
+          console.log('搜索结果出错', err)
+        })
+      }
+    },
+    handleClear () {
+      this.isQuery = false
+      getPrices().then((res) => {
         this.prices = res.data.data
+        this.pagination.currentPage = res.data.meta.current_page
+        this.pagination.total = res.data.meta.total
+        this.pagination.pageSize = res.data.meta.per_page
       }).catch((err) => {
-        console.log('换页失败', err)
+        console.log('获取报价单列表出错', err)
+        this.$message.error('报价单列表获取出错，请检查网络环境')
       })
     }
   }

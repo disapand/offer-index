@@ -1,9 +1,6 @@
 <template>
     <div>
-      <el-button type="text" style="font-size: 2rem" @click="isCollapse">
-        <i class="el-icon-menu"></i>
-      </el-button>
-      <el-button type="primary" @click="logout" style="float:right">退出</el-button>
+      <el-button type="primary" @click="logout" style="float:right;margin: 10px">退出</el-button>
     </div>
 </template>
 
@@ -11,9 +8,6 @@
 export default {
   name: 'handleHeader',
   methods: {
-    isCollapse () {
-      this.$store.commit('setCollapse', !this.$store.state.isCollapse)
-    },
     logout () {
       this.$message.info('退出成功')
       this.$store.dispatch('logout')
