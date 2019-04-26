@@ -5,6 +5,15 @@
     <el-button type="warning" @click="addTransform" style="display: block; margin-left: 0; margin-top: 10px">添加交通费</el-button>
     <el-button type="info" @click="getDiscount" style="display: block; margin-left: 0; margin-top: 10px">折扣&nbsp;{{ discount * 100 + '%' }}</el-button>
     <el-button type="primary" @click="getPDF(contact.company)" style="display: block; margin-left: 0; margin-top: 10px">导出PDF</el-button>
+    <el-upload
+      style="display: block; margin-left: 0; margin-top: 10px"
+      action="http://offer.test/api/uploadPaperList"
+      :headers="{ Authorization: this.$store.getters.getToken }"
+      :on-error="handleUploadError"
+      :on-success="handleUploadSuccess"
+      :show-file-list=false>
+      <el-button>点击上传</el-button>
+    </el-upload>
   </div>
   <div class="paper">
     <el-row>
@@ -306,6 +315,14 @@ export default {
           console.log('保存出错', err)
         })
       }
+    },
+    handleUploadError (err) {
+      console.log('上传文件出错', err)
+      this.$message.error('上传出错，请检查文件内容再试')
+    },
+    handleUploadSuccess (res) {
+      this.$message.success('上传成功')
+      console.log('上传成功', res)
     }
   },
   computed: {
