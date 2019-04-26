@@ -4,7 +4,7 @@
         <el-col :span="6" :offset="9">
           <el-card shadow="always">
             <div slot="header">
-              <h1>offer-index</h1>
+              <h1>在线报价系统</h1>
             </div>
             <el-form ref="loginInfo" :rules="loginInfoRules" :model="loginInfo">
               <el-form-item label="用户名" prop="account">
