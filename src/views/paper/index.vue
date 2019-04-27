@@ -283,7 +283,7 @@ export default {
       this.paperList.splice(index, 1)
     },
     addTransform () {
-      this.$prompt('交通费', '提示', {
+      this.$prompt('', '交通费', {
         confirmButtonText: '确定',
         cancelButtonClass: '取消',
         inputType: 'number'
@@ -292,9 +292,10 @@ export default {
       })
     },
     getDiscount () {
-      this.$prompt('折扣', '提示', {
+      this.$prompt('', '折扣', {
         confirmButtonText: '确定',
         cancelButtonClass: '取消',
+        inputPlaceholder: '几折就输入几，比如八折就输入 8 ,不打折输入 10 ',
         inputType: 'number'
       }).then(({ value }) => {
         this.discount = value / 10
@@ -321,8 +322,8 @@ export default {
       this.$message.error('上传出错，请检查文件内容再试')
     },
     handleUploadSuccess (res) {
-      this.$message.success('上传成功')
-      console.log('上传成功', res)
+      this.paperList = res.data
+      console.log('上传成功', this.paperList)
     }
   },
   computed: {
