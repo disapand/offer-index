@@ -124,10 +124,10 @@
         <el-input v-model="paper.type"></el-input>
       </el-col>
       <el-col :span="2" class="bordered-text-center">
-        <el-input v-model="paper.number"></el-input>
+        <el-input v-model="paper.number" @change="handleChangeNumberOrPrice(index)"></el-input>
       </el-col>
       <el-col :span="2" class="bordered-text-center">
-        <el-input v-model="paper.price"></el-input>
+        <el-input v-model="paper.price" @change="handleChangeNumberOrPrice(index)"></el-input>
       </el-col>
       <el-col :span="2" class="bordered-text-center">
         <el-input v-model="paper.total"></el-input>
@@ -169,13 +169,10 @@
           <el-input v-model="paperListItem.type" clearable></el-input>
         </el-form-item>
         <el-form-item label="数量（台）" prop="number" style="width: 48%; display: inline-block">
-          <el-input v-model.number="paperListItem.number" clearable @keyup.enter.native="handleAddItem"></el-input>
+          <el-input v-model.number="paperListItem.number" clearable @keyup.enter.native="handleAddItem" @change="computeTotal"></el-input>
         </el-form-item>
         <el-form-item label="单价（元）" prop="price" style="width: 48%; display: inline-block;margin-left: 4%;">
-          <el-input v-model="paperListItem.price" clearable @keyup.enter.native="handleAddItem"></el-input>
-        </el-form-item>
-        <el-form-item label="合计（元）" prop="total">
-          <el-input v-model="paperListItem.total" clearable></el-input>
+          <el-input v-model="paperListItem.price" clearable @keyup.enter.native="handleAddItem" @change="computeTotal"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="notice">
           <el-input v-model="paperListItem.notice" clearable></el-input>
@@ -307,11 +304,10 @@ export default {
         return false
       } else {
         paper(this.$data).then((res) => {
-          console.log(res)
+          pdf(title)
           this.contact = []
           this.paperList = []
           this.$message.success('PDF生成成功')
-          pdf(title)
         }).catch((err) => {
           console.log('保存出错', err)
         })
@@ -324,13 +320,22 @@ export default {
     handleUploadSuccess (res) {
       this.paperList = res.data
       console.log('上传成功', this.paperList)
+    },
+    handleChangeNumberOrPrice (index) {
+      console.log('之前', this.paperList[index].total, this.paperList[index].number, this.paperList[index].price)
+      this.paperList[index].total = this.paperList[index].number * this.paperList[index].price
+      console.log('之后', this.paperList[index].total, this.paperList[index].number, this.paperList[index].price)
+    },
+    computeTotal () {
+      console.log(this.paperListItem.price * this.paperListItem.number)
+      this.paperListItem.total = this.paperListItem.price * this.paperListItem.number
     }
   },
   computed: {
-    getTotal () {
-      let total = this.paperListItem.number * this.paperListItem.price
-      return isNaN(total) ? 0 : total
-    },
+    // getTotal () {
+    //   let total = this.paperListItem.number * this.paperListItem.price
+    //   return isNaN(total) ? 0 : total
+    // },
     getBig () {
       return smallToBig(this.shouldPay)
     },
@@ -350,9 +355,9 @@ export default {
 
   },
   watch: {
-    getTotal (total) {
-      this.paperListItem.total = total
-    }
+    // getTotal (total) {
+    //   this.paperListItem.total = total
+    // }
   }
 }
 </script>
