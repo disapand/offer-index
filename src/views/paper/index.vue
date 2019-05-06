@@ -12,7 +12,7 @@
       :on-error="handleUploadError"
       :on-success="handleUploadSuccess"
       :show-file-list=false>
-      <el-button>点击上传</el-button>
+      <el-button>上传清单</el-button>
     </el-upload>
   </div>
   <div class="paper">
