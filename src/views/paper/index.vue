@@ -304,6 +304,7 @@ export default {
         return false
       } else {
         paper(this.$data).then((res) => {
+          console.log((res))
           pdf(title)
           this.contact = []
           this.paperList = []
@@ -322,20 +323,13 @@ export default {
       console.log('上传成功', this.paperList)
     },
     handleChangeNumberOrPrice (index) {
-      console.log('之前', this.paperList[index].total, this.paperList[index].number, this.paperList[index].price)
       this.paperList[index].total = this.paperList[index].number * this.paperList[index].price
-      console.log('之后', this.paperList[index].total, this.paperList[index].number, this.paperList[index].price)
     },
     computeTotal () {
-      console.log(this.paperListItem.price * this.paperListItem.number)
       this.paperListItem.total = this.paperListItem.price * this.paperListItem.number
     }
   },
   computed: {
-    // getTotal () {
-    //   let total = this.paperListItem.number * this.paperListItem.price
-    //   return isNaN(total) ? 0 : total
-    // },
     getBig () {
       return smallToBig(this.shouldPay)
     },

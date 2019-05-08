@@ -101,7 +101,6 @@
 
 <script>
 import { pdf } from '../../handle/htmlToPdf'
-import { paper } from '../../api/paper'
 import { getPaper } from '../../api/paper'
 import fw from '../../assets/fw.jpg'
 import pt from '../../assets/pt.jpg'

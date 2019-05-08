@@ -7,7 +7,9 @@ export function pdf (title) {
     title = '报价单'
   }
   html2Canvas(document.querySelector('.paper'), {
-    allowTaint: true
+    allowTaint: true,
+    useCORS: true,
+    taintTest: false
   }).then((canvas) => {
     let contentWidth = canvas.width
     let contentHeight = canvas.height
@@ -22,6 +24,7 @@ export function pdf (title) {
     }
     let img = new Image()
     img.src = signUrl
+    img.setAttribute('crossOrigin', 'anonymous')
     let pageData = canvas.toDataURL('image/jpeg', 1.0)
     // let PDF = new JsPDF('', 'pt', 'a4')
     let PDF = new JsPDF(orientation, 'pt', [contentWidth, contentHeight])
