@@ -7,7 +7,7 @@
     <el-button type="primary" @click="getPDF(contact.company)" style="display: block; margin-left: 0; margin-top: 10px">导出PDF</el-button>
     <el-upload
       style="display: block; margin-left: 0; margin-top: 10px"
-      action="http://offer.test/api/uploadPaperList"
+      action="http://api.liyuanjiliang.com/api/uploadPaperList"
       :headers="{ Authorization: this.$store.getters.getToken }"
       :on-error="handleUploadError"
       :on-success="handleUploadSuccess"
