@@ -4,6 +4,7 @@
     <el-button type="success" @click="addItem = true" style="display: block">添加条目</el-button>
     <el-button type="warning" @click="addTransform" style="display: block; margin-left: 0; margin-top: 10px">添加交通费</el-button>
     <el-button type="info" @click="getDiscount" style="display: block; margin-left: 0; margin-top: 10px">折扣&nbsp;{{ discount * 100 + '%' }}</el-button>
+    <el-button type="danger" @click="savePaper()" style="display: block; margin-left: 0; margin-top: 10px">保存清单</el-button>
     <el-button type="primary" @click="getPDF(contact.company)" style="display: block; margin-left: 0; margin-top: 10px">导出PDF</el-button>
     <el-upload
       style="display: block; margin-left: 0; margin-top: 10px"
@@ -309,6 +310,21 @@ export default {
           this.contact = []
           this.paperList = []
           this.$message.success('PDF生成成功')
+        }).catch((err) => {
+          console.log('保存出错', err)
+        })
+      }
+    },
+    savePaper () {
+      if (!this.contact.company || this.paperList.length === 0) {
+        this.$alert('请输入完整的内容', '内容异常')
+        return false
+      } else {
+        paper(this.$data).then((res) => {
+          console.log((res))
+          this.contact = []
+          this.paperList = []
+          this.$message.success('保存清单成功')
         }).catch((err) => {
           console.log('保存出错', err)
         })
